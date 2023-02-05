@@ -1,0 +1,31 @@
+{
+  "TrainSimPath": "C:\\Users\\rabek\\source\\repos\\RouteManager\\src\\RouteManager\\bin\\Debug\\net7.0-windows\\TEST\\TrainSim",
+  "ExtStoragePath": "C:\\Users\\rabek\\source\\repos\\RouteManager\\src\\RouteManager\\bin\\Debug\\net7.0-windows\\TEST\\ODLOZ",
+  "Routes": [
+    {
+      "Name": "Breclav - Praha",
+      "Global": "Global_BP",
+      "Sound": "Sound_BP"
+    },
+    {
+      "Name": "Luhacovice",
+      "Global": "Global_BP",
+      "Sound": "Sound_BP"
+    },
+    {
+      "Name": "Dvoukolejka",
+      "Global": "Global_090",
+      "Sound": "Sound_BP"
+    },
+    {
+      "Name": "Caslav",
+      "Global": "Global_BP",
+      "Sound": "Sound_CS"
+    },
+    {
+      "Name": "Trat 321",
+      "Global": "Global_321",
+      "Sound": "Sound_321"
+    }
+  ]
+}
