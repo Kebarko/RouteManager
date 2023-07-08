@@ -8,7 +8,7 @@ namespace KE.MSTS.RouteManager;
 /// </summary>
 public partial class MainWindow
 {
-    private Mover mover = null!;
+    private readonly Mover mover = new();
 
     public MainWindow()
     {
@@ -19,10 +19,7 @@ public partial class MainWindow
     {
         try
         {
-            mover = new Mover();
-            mover.DiscoverCurrentState();
-            ActiveRoutes.ItemsSource = mover.GetActiveRouteNames();
-            InactiveRoutes.ItemsSource = mover.GetInactiveRouteNames();
+            ReloadState();
         }
         catch (Exception ex)
         {
@@ -39,9 +36,8 @@ public partial class MainWindow
         try
         {
             mover.Move((MovableRoute)ActiveRoutes.SelectedValue);
-            mover.DiscoverCurrentState();
-            ActiveRoutes.ItemsSource = mover.GetActiveRouteNames();
-            InactiveRoutes.ItemsSource = mover.GetInactiveRouteNames();
+
+            ReloadState();
         }
         catch (Exception ex)
         {
@@ -58,14 +54,20 @@ public partial class MainWindow
         try
         {
             mover.Move((MovableRoute)InactiveRoutes.SelectedValue);
-            mover.DiscoverCurrentState();
-            ActiveRoutes.ItemsSource = mover.GetActiveRouteNames();
-            InactiveRoutes.ItemsSource = mover.GetInactiveRouteNames();
+
+            ReloadState();
         }
         catch (Exception ex)
         {
             MoveToExtStorage.IsEnabled = MoveToTrainSim.IsEnabled = false;
             MessageBox.Show(this, ex.InnerException?.Message ?? ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void ReloadState()
+    {
+        mover.DiscoverCurrentState();
+        ActiveRoutes.ItemsSource = mover.GetActiveRoutes();
+        InactiveRoutes.ItemsSource = mover.GetInactiveRoutes();
     }
 }

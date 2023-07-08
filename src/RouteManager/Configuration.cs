@@ -5,14 +5,29 @@ using System.Text.Json;
 
 namespace KE.MSTS.RouteManager;
 
+/// <summary>
+/// Represents a configuration.
+/// </summary>
 internal sealed class Configuration
 {
+    /// <summary>
+    /// Gets the configuration instance
+    /// </summary>
     public static Configuration Instance { get; } = new();
 
+    /// <summary>
+    /// Gets or sets the Train Simulator full path.
+    /// </summary>
     public string TrainSimPath { get; set; }
 
+    /// <summary>
+    /// Gets or sets the external storage full path.
+    /// </summary>
     public string ExtStoragePath { get; set; }
 
+    /// <summary>
+    /// Gets or sets the collection of routes.
+    /// </summary>
     public ICollection<Route> Routes { get; set; }
 
     static Configuration()
@@ -23,15 +38,10 @@ internal sealed class Configuration
     {
         using (Stream sr = new FileStream("configuration.json", FileMode.Open, FileAccess.Read, FileShare.None))
         {
-            JsonDocument jDoc = JsonDocument.Parse(sr);
+            JsonDocument jDoc = JsonDocument.Parse(sr) ?? throw new ApplicationException("Configuration not found!");
 
-            if (jDoc == null)
-                throw new ApplicationException("Configuration not found!");
-
-            jDoc.RootElement.GetProperty(nameof(TrainSimPath));
-
-            TrainSimPath = jDoc.RootElement.GetProperty(nameof(TrainSimPath)).GetString();
-            ExtStoragePath = jDoc.RootElement.GetProperty(nameof(ExtStoragePath)).GetString();
+            TrainSimPath = jDoc.RootElement.GetProperty(nameof(TrainSimPath)).GetString() ?? string.Empty;
+            ExtStoragePath = jDoc.RootElement.GetProperty(nameof(ExtStoragePath)).GetString() ?? string.Empty;
             Routes = jDoc.RootElement.GetProperty(nameof(Routes)).Deserialize<List<Route>>() ?? new List<Route>();
         }
 
