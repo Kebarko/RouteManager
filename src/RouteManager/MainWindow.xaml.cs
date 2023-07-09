@@ -20,6 +20,9 @@ public partial class MainWindow
         try
         {
             ReloadState();
+
+            TrainSimPath.Text = Configuration.Instance.TrainSimPath;
+            ExtStoragePath.Text = Configuration.Instance.ExtStoragePath;
         }
         catch (Exception ex)
         {

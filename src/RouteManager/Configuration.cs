@@ -16,19 +16,19 @@ internal sealed class Configuration
     public static Configuration Instance { get; } = new();
 
     /// <summary>
-    /// Gets or sets the Train Simulator full path.
+    /// Gets the Train Simulator full path.
     /// </summary>
-    public string TrainSimPath { get; set; }
+    public string TrainSimPath { get; private set; }
 
     /// <summary>
-    /// Gets or sets the external storage full path.
+    /// Gets the external storage full path.
     /// </summary>
-    public string ExtStoragePath { get; set; }
+    public string ExtStoragePath { get; private set; }
 
     /// <summary>
-    /// Gets or sets the collection of routes.
+    /// Gets the collection of routes.
     /// </summary>
-    public ICollection<Route> Routes { get; set; }
+    public ICollection<Route> Routes { get; } = new List<Route>();
 
     static Configuration()
     {
@@ -40,37 +40,46 @@ internal sealed class Configuration
         {
             JsonDocument jDoc = JsonDocument.Parse(sr) ?? throw new ApplicationException("Configuration not found!");
 
-            TrainSimPath = jDoc.RootElement.GetProperty(nameof(TrainSimPath)).GetString() ?? string.Empty;
-            ExtStoragePath = jDoc.RootElement.GetProperty(nameof(ExtStoragePath)).GetString() ?? string.Empty;
-            Routes = jDoc.RootElement.GetProperty(nameof(Routes)).Deserialize<List<Route>>() ?? new List<Route>();
-        }
+            string? trainSimPath = jDoc.RootElement.GetProperty(nameof(TrainSimPath)).GetString();
+            string? extStoragePath = jDoc.RootElement.GetProperty(nameof(ExtStoragePath)).GetString();
 
-        if (!Path.Exists(TrainSimPath))
-            throw new ApplicationException(@$"{TrainSimPath}{Environment.NewLine}The specified path does not exist!");
+            if (!Path.Exists(trainSimPath))
+                throw new ApplicationException(@$"{trainSimPath}{Environment.NewLine}The specified path does not exist!");
 
-        if (!Path.Exists(ExtStoragePath))
-            throw new ApplicationException(@$"{ExtStoragePath}{Environment.NewLine}The specified path does not exist!");
+            if (!Path.Exists(extStoragePath))
+                throw new ApplicationException(@$"{extStoragePath}{Environment.NewLine}The specified path does not exist!");
 
-        if (Path.GetPathRoot(TrainSimPath) != Path.GetPathRoot(ExtStoragePath))
-            throw new ApplicationException("Train Simulator and external storage must be on the same volume!");
+            if (Path.GetPathRoot(trainSimPath) != Path.GetPathRoot(extStoragePath))
+                throw new ApplicationException("Train Simulator and external storage must be on the same volume!");
 
-        if (TrainSimPath.StartsWith(ExtStoragePath, StringComparison.InvariantCultureIgnoreCase) ||
-            ExtStoragePath.StartsWith(TrainSimPath, StringComparison.InvariantCultureIgnoreCase))
-            throw new ApplicationException("Train Simulator and external storage must be in different folders!");
+            if (trainSimPath.StartsWith(extStoragePath, StringComparison.InvariantCultureIgnoreCase) ||
+                extStoragePath.StartsWith(trainSimPath, StringComparison.InvariantCultureIgnoreCase))
+                throw new ApplicationException("Train Simulator and external storage must be in different folders!");
 
-        if (Routes.Count == 0)
-            throw new ApplicationException("Routes not found!");
+            TrainSimPath = trainSimPath;
+            ExtStoragePath = extStoragePath;
 
-        foreach (Route confRoute in Routes)
-        {
-            if (string.IsNullOrEmpty(confRoute.Name))
-                throw new ApplicationException("Route name is undefined!");
+            JsonElement routes = jDoc.RootElement.GetProperty(nameof(Routes));
+            foreach (JsonElement route in routes.EnumerateArray())
+            {
+                string? name = route.GetProperty(nameof(Route.Name)).GetString();
+                string? global = route.GetProperty(nameof(Route.Global)).GetString();
+                string? sound = route.GetProperty(nameof(Route.Sound)).GetString();
 
-            if (string.IsNullOrEmpty(confRoute.Global))
-                throw new ApplicationException($"Global of the '{confRoute.Name}' route is undefined!");
+                if (string.IsNullOrEmpty(name))
+                    throw new ApplicationException("Route name is undefined!");
 
-            if (string.IsNullOrEmpty(confRoute.Sound))
-                throw new ApplicationException($"Sound of the '{confRoute.Name}' route is undefined!");
+                if (string.IsNullOrEmpty(global))
+                    throw new ApplicationException($"Global of the '{name}' route is undefined!");
+
+                if (string.IsNullOrEmpty(sound))
+                    throw new ApplicationException($"Sound of the '{name}' route is undefined!");
+
+                Routes.Add(new Route(name, global, sound));
+            }
+
+            if (Routes.Count == 0)
+                throw new ApplicationException("Routes not found!");
         }
     }
 }

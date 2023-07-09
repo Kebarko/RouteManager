@@ -10,9 +10,6 @@
         MinHeight="640" MinWidth="480"
         WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_OnLoaded">
-    <Window.DataContext>
-        <local:MovableRoute />
-    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -68,7 +65,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Grid.Row="2" Grid.Column="0" FontSize="12" TextWrapping="Wrap" Margin="20, 5, 20, 5" Text="{Binding Source={x:Static local:Configuration.Instance}, Path=TrainSimPath}"/>
-        <TextBlock Grid.Row="2" Grid.Column="2"  TextWrapping="WrapWithOverflow" Margin="20, 5, 20, 5" Text="{Binding Source={x:Static local:Configuration.Instance}, Path=ExtStoragePath}"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" FontSize="12" TextWrapping="Wrap" Margin="20, 5, 20, 5" Name="TrainSimPath"/>
+        <TextBlock Grid.Row="2" Grid.Column="2"  TextWrapping="WrapWithOverflow" Margin="20, 5, 20, 5" Name="ExtStoragePath"/>
     </Grid>
 </Window>

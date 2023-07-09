@@ -9,26 +9,19 @@ namespace KE.MSTS.RouteManager;
 internal class Route
 {
     /// <summary>
-    /// Gets or sets the name of the route.
+    /// Gets the name of the route.
     /// </summary>
-    public string? Name { get; set; }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets the name of the route's global.
+    /// Gets the name of the route's global.
     /// </summary>
-    public string? Global { get; set; }
+    public string Global { get; }
 
     /// <summary>
-    /// Gets or sets the name of the route's sound.
+    /// Gets the name of the route's sound.
     /// </summary>
-    public string? Sound { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Route"/> class.
-    /// </summary>
-    public Route()
-    {
-    }
+    public string Sound { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Route"/> class with values of the specified route.
@@ -45,7 +38,7 @@ internal class Route
     /// <param name="name">The route name.</param>
     /// <param name="global">The global name.</param>
     /// <param name="sound">The sound name.</param>
-    public Route(string? name, string? global, string? sound)
+    public Route(string name, string global, string sound)
     {
         Name = name;
         Global = global;
@@ -59,8 +52,8 @@ internal class Route
     {
         return place switch
         {
-            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "ROUTES", Name!),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, "ROUTES", Name!),
+            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "ROUTES", Name),
+            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, "ROUTES", Name),
             _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
         };
     }
@@ -73,7 +66,7 @@ internal class Route
         return place switch
         {
             Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "GLOBAL"),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Global!),
+            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Global),
             _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
         };
     }
@@ -86,7 +79,7 @@ internal class Route
         return place switch
         {
             Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "SOUND"),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Sound!),
+            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Sound),
             _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
         };
     }

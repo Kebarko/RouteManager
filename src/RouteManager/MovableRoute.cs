@@ -18,13 +18,6 @@ internal class MovableRoute : Route
     public Color CurrentColor { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MovableRoute"/> class.
-    /// </summary>
-    public MovableRoute()
-    {
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="MovableRoute"/> class with values of the specified route and current place.
     /// </summary>
     /// <param name="route">The route to create from.</param>
