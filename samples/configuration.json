@@ -1,6 +1,6 @@
 {
-  "TrainSimPath": "C:\\Users\\rabek\\source\\repos\\RouteManager\\src\\RouteManager\\bin\\Debug\\net7.0-windows\\TEST\\TrainSim",
-  "ExtStoragePath": "C:\\Users\\rabek\\source\\repos\\RouteManager\\src\\RouteManager\\bin\\Debug\\net7.0-windows\\TEST\\ODLOZ",
+  "TrainSimPath": "C:\\Path\\To\\TrainSim\\TEST\\TrainSim",
+  "ExtStoragePath": "C:\\Path\\To\\ExtStorage\\TEST\\ODLOZ",
   "Routes": [
     {
       "Name": "Breclav - Praha",
