@@ -13,9 +13,13 @@ namespace KE.MSTS.RouteManager
             base.OnStartup(e);
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.File("logs/RouteManager.log",
-                rollingInterval: RollingInterval.Day,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(
+                    path: "logs/RouteManager.log",
+                    rollingInterval: RollingInterval.Day,
+                    rollOnFileSizeLimit: false,
+                    retainedFileCountLimit: 3,
+                    shared: true,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
         }
 
