@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Windows;
 
 namespace KE.MSTS.RouteManager;
@@ -26,6 +27,8 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
+            Log.Error(ex.InnerException?.Message ?? ex.Message);
+
             MoveToExtStorage.IsEnabled = MoveToTrainSim.IsEnabled = false;
             MessageBox.Show(this, ex.InnerException?.Message ?? ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -44,6 +47,8 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
+            Log.Error(ex.InnerException?.Message ?? ex.Message);
+
             MoveToExtStorage.IsEnabled = MoveToTrainSim.IsEnabled = false;
             MessageBox.Show(this, ex.InnerException?.Message ?? ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -62,6 +67,8 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
+            Log.Error(ex.InnerException?.Message ?? ex.Message);
+
             MoveToExtStorage.IsEnabled = MoveToTrainSim.IsEnabled = false;
             MessageBox.Show(this, ex.InnerException?.Message ?? ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
