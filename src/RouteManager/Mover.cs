@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -141,12 +142,12 @@ internal class Mover
         {
             // The route is in the Train Simulator
 
-            Directory.Move(route.GetRoutePath(Place.TrainSim), route.GetRoutePath(Place.ExtStorage));
+            MoveDirectory(route.GetRoutePath(Place.TrainSim), route.GetRoutePath(Place.ExtStorage));
 
             if (routes.Count(r => r.CurrentPlace == Place.TrainSim) == 1)
             {
-                Directory.Move(route.GetGlobalPath(Place.TrainSim), route.GetGlobalPath(Place.ExtStorage));
-                Directory.Move(route.GetSoundPath(Place.TrainSim), route.GetSoundPath(Place.ExtStorage));
+                MoveDirectory(route.GetGlobalPath(Place.TrainSim), route.GetGlobalPath(Place.ExtStorage));
+                MoveDirectory(route.GetSoundPath(Place.TrainSim), route.GetSoundPath(Place.ExtStorage));
             }
 
             route.CurrentPlace = Place.ExtStorage;
@@ -161,35 +162,42 @@ internal class Mover
             {
                 foreach (MovableRoute conflictingRoute in conflictingRoutes)
                 {
-                    Directory.Move(conflictingRoute.GetRoutePath(Place.TrainSim), conflictingRoute.GetRoutePath(Place.ExtStorage));
+                    MoveDirectory(conflictingRoute.GetRoutePath(Place.TrainSim), conflictingRoute.GetRoutePath(Place.ExtStorage));
                 }
 
                 MovableRoute oneConflictingRoute = conflictingRoutes.DistinctBy(r => r.Global + r.Sound).Single();
 
                 if (oneConflictingRoute.Global != route.Global)
                 {
-                    Directory.Move(oneConflictingRoute.GetGlobalPath(Place.TrainSim), oneConflictingRoute.GetGlobalPath(Place.ExtStorage));
+                    MoveDirectory(oneConflictingRoute.GetGlobalPath(Place.TrainSim), oneConflictingRoute.GetGlobalPath(Place.ExtStorage));
                 }
 
                 if (oneConflictingRoute.Sound != route.Sound)
                 {
-                    Directory.Move(oneConflictingRoute.GetSoundPath(Place.TrainSim), oneConflictingRoute.GetSoundPath(Place.ExtStorage));
+                    MoveDirectory(oneConflictingRoute.GetSoundPath(Place.TrainSim), oneConflictingRoute.GetSoundPath(Place.ExtStorage));
                 }
             }
 
             if (Directory.Exists(route.GetGlobalPath(Place.ExtStorage)))
             {
-                Directory.Move(route.GetGlobalPath(Place.ExtStorage), route.GetGlobalPath(Place.TrainSim));
+                MoveDirectory(route.GetGlobalPath(Place.ExtStorage), route.GetGlobalPath(Place.TrainSim));
             }
 
             if (Directory.Exists(route.GetSoundPath(Place.ExtStorage)))
             {
-                Directory.Move(route.GetSoundPath(Place.ExtStorage), route.GetSoundPath(Place.TrainSim));
+                MoveDirectory(route.GetSoundPath(Place.ExtStorage), route.GetSoundPath(Place.TrainSim));
             }
 
-            Directory.Move(route.GetRoutePath(Place.ExtStorage), route.GetRoutePath(Place.TrainSim));
+            MoveDirectory(route.GetRoutePath(Place.ExtStorage), route.GetRoutePath(Place.TrainSim));
 
             route.CurrentPlace = Place.TrainSim;
         }
+    }
+
+    private static void MoveDirectory(string sourceDirName, string destDirName)
+    {
+        Directory.Move(sourceDirName, destDirName);
+
+        Log.Information($"Directory '{sourceDirName}' moved to '{destDirName}'.");
     }
 }

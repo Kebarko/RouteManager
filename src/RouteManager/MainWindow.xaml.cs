@@ -41,7 +41,13 @@ public partial class MainWindow
 
         try
         {
-            mover.Move((MovableRoute)ActiveRoutes.SelectedValue);
+            var route = (MovableRoute)ActiveRoutes.SelectedValue;
+
+            Log.Information($"Start of the moving route '{route.Name}'.");
+
+            mover.Move(route);
+
+            Log.Information($"End of the moving route '{route.Name}'.");
 
             ReloadState();
         }
@@ -61,7 +67,13 @@ public partial class MainWindow
 
         try
         {
-            mover.Move((MovableRoute)InactiveRoutes.SelectedValue);
+            var route = (MovableRoute)InactiveRoutes.SelectedValue;
+
+            Log.Information($"Start of the moving route '{route.Name}'.");
+
+            mover.Move(route);
+
+            Log.Information($"End of the moving route '{route.Name}'.");
 
             ReloadState();
         }
