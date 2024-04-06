@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using System;
+using System.Reflection;
 using System.Windows;
 
 namespace KE.MSTS.RouteManager;
@@ -14,6 +15,8 @@ public partial class MainWindow
     public MainWindow()
     {
         InitializeComponent();
+
+        Title = $"RouteManager  [{Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)}]";
     }
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
