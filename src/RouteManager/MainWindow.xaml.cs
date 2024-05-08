@@ -16,7 +16,7 @@ public partial class MainWindow
     {
         InitializeComponent();
 
-        Title = $"RouteManager {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)}";
+        Title = $"RouteManager {Assembly.GetExecutingAssembly().GetName().Version?.ToString(2)}";
     }
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
