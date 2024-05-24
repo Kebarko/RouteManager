@@ -1,31 +1,31 @@
-{
+﻿{
   "TrainSimPath": "C:\\Path\\To\\TrainSim\\TEST\\TrainSim",
-  "ExtStoragePath": "C:\\Path\\To\\ExtStorage\\TEST\\ODLOZ",
+  "ExtStoragePath": "C:\\Path\\To\\ExtStorage\\TEST\\ExtStorage",
   "Routes": [
     {
-      "Name": "Breclav - Praha",
-      "Global": "Global_BP",
-      "Sound": "Sound_BP"
+      "Name": "Route_1",
+      "Global": "Global_A",
+      "Sound": "Sound_A"
     },
     {
-      "Name": "Luhacovice",
-      "Global": "Global_BP",
-      "Sound": "Sound_BP"
+      "Name": "Route_2",
+      "Global": "Global_A",
+      "Sound": "Sound_A"
     },
     {
-      "Name": "Dvoukolejka",
-      "Global": "Global_090",
-      "Sound": "Sound_BP"
+      "Name": "Route_3",
+      "Global": "Global_B",
+      "Sound": "Sound_A"
     },
     {
-      "Name": "Caslav",
-      "Global": "Global_BP",
-      "Sound": "Sound_CS"
+      "Name": "Route_4",
+      "Global": "Global_A",
+      "Sound": "Sound_B"
     },
     {
-      "Name": "Trat 321",
-      "Global": "Global_321",
-      "Sound": "Sound_321"
+      "Name": "Route_5",
+      "Global": "Global_C",
+      "Sound": "Sound_C"
     }
   ]
 }
