@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace KE.MSTS.RouteManager;
 
@@ -9,27 +12,38 @@ namespace KE.MSTS.RouteManager;
 internal class Route
 {
     /// <summary>
+    /// Represents a name of the Global folder.
+    /// </summary>
+    public const string Global = "Global";
+
+    /// <summary>
+    /// Represent a name of the Sound folder.
+    /// </summary>
+    public const string Sound = "Sound";
+
+    /// <summary>
+    /// Represents a name of the Routes folder.
+    /// </summary>
+    public const string Routes = "Routes";
+
+    /// <summary>
     /// Gets the name of the route.
     /// </summary>
     public string Name { get; }
 
     /// <summary>
-    /// Gets the name of the route's global.
+    /// Gets the dictionary of route folder in the root directory (Global, Sound, etc.).
     /// </summary>
-    public string Global { get; }
-
-    /// <summary>
-    /// Gets the name of the route's sound.
-    /// </summary>
-    public string Sound { get; }
+    public IReadOnlyDictionary<string, string> Folders { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Route"/> class with values of the specified route.
     /// </summary>
     /// <param name="route">The route to copy from.</param>
     public Route(Route route)
-        : this(route.Name, route.Global, route.Sound)
+        : this(route.Name, route.Folders)
     {
+
     }
 
     /// <summary>
@@ -38,11 +52,10 @@ internal class Route
     /// <param name="name">The route name.</param>
     /// <param name="global">The global name.</param>
     /// <param name="sound">The sound name.</param>
-    public Route(string name, string global, string sound)
+    public Route(string name, IEnumerable<KeyValuePair<string, string>> folders)
     {
         Name = name;
-        Global = global;
-        Sound = sound;
+        Folders = folders.ToFrozenDictionary();
     }
 
     /// <summary>
@@ -52,35 +65,38 @@ internal class Route
     {
         return place switch
         {
-            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "ROUTES", Name),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, "ROUTES", Name),
+            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, Routes, Name),
+            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Routes, Name),
             _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
         };
     }
 
     /// <summary>
-    /// Gets the full path of the route's global on the specified place.
+    /// Gets the full path of the specified route folder on the specified place.
     /// </summary>
-    public string GetGlobalPath(Place place)
+    public string GetFolderPath(string folderName, Place place)
     {
         return place switch
         {
-            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "GLOBAL"),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Global),
+            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, folderName),
+            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, folderName),
             _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
         };
     }
 
     /// <summary>
-    /// Gets the full path of the route's sound on the specified place.
+    /// Determines whether this route is compatible with the specified route.
     /// </summary>
-    public string GetSoundPath(Place place)
+    public bool IsCompatible(Route route)
     {
-        return place switch
+        foreach (string key in Folders.Keys.Intersect(route.Folders.Keys))
         {
-            Place.TrainSim => Path.Combine(Configuration.Instance.TrainSimPath, "SOUND"),
-            Place.ExtStorage => Path.Combine(Configuration.Instance.ExtStoragePath, Sound),
-            _ => throw new ArgumentOutOfRangeException(nameof(place), place, null),
-        };
+            if (Folders[key] != route.Folders[key])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

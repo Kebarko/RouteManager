@@ -62,20 +62,35 @@ internal sealed class Configuration
             JsonElement routes = jDoc.RootElement.GetProperty(nameof(Routes));
             foreach (JsonElement route in routes.EnumerateArray())
             {
-                string? name = route.GetProperty(nameof(Route.Name)).GetString();
-                string? global = route.GetProperty(nameof(Route.Global)).GetString();
-                string? sound = route.GetProperty(nameof(Route.Sound)).GetString();
+                string? name = null;
+                var folders = new Dictionary<string, string>();
+
+                foreach (JsonProperty property in route.EnumerateObject())
+                {
+                    string? value = property.Value.GetString();
+                    if (!string.IsNullOrEmpty(property.Name) && !string.IsNullOrEmpty(value))
+                    {
+                        if (property.Name == "Name")
+                        {
+                            name = value;
+                        }
+                        else
+                        {
+                            folders.Add(property.Name, value);
+                        }
+                    }
+                }
 
                 if (string.IsNullOrEmpty(name))
                     throw new ApplicationException("Route name is undefined!");
 
-                if (string.IsNullOrEmpty(global))
+                if (!folders.ContainsKey(Route.Global))
                     throw new ApplicationException($"Global of the '{name}' route is undefined!");
 
-                if (string.IsNullOrEmpty(sound))
+                if (!folders.ContainsKey(Route.Global))
                     throw new ApplicationException($"Sound of the '{name}' route is undefined!");
 
-                Routes.Add(new Route(name, global, sound));
+                Routes.Add(new Route(name, folders));
             }
 
             if (Routes.Count == 0)

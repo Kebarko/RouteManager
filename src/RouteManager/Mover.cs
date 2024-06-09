@@ -12,7 +12,7 @@ namespace KE.MSTS.RouteManager;
 /// </summary>
 internal class Mover
 {
-    private readonly ICollection<MovableRoute> routes;
+    private readonly List<MovableRoute> routes;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Mover"/> class.
@@ -33,100 +33,90 @@ internal class Mover
     /// <summary>
     /// Gets the list of routes which are located in the external storage.
     /// </summary>
-    /// <returns></returns>
     public IList<MovableRoute> GetInactiveRoutes()
     {
         return routes.Where(r => r.CurrentPlace == Place.ExtStorage).OrderBy(r => r.Name).ToList();
     }
 
     /// <summary>
-    /// Discovers the current states of routes.
+    /// Discovers the current state of routes.
     /// </summary>
     public void DiscoverCurrentState()
     {
+        // Create instances of movable routes according to configuration
         routes.Clear();
         foreach (Route route in Configuration.Instance.Routes)
         {
+            // Check if the route is in Train Simulator
             if (Directory.Exists(route.GetRoutePath(Place.TrainSim)))
             {
-                // The route is in the Train Simulator.
                 routes.Add(new MovableRoute(route, Place.TrainSim));
             }
+            // Check if the route is in external storage
             else if (Directory.Exists(route.GetRoutePath(Place.ExtStorage)))
             {
-                // The route is in the external storage.
                 routes.Add(new MovableRoute(route, Place.ExtStorage));
             }
             else
             {
-                // The route not found.
-                throw new ApplicationException($"The route '{route.Name}' not found!");
+                // The route was not found
+                throw new ApplicationException($"The route '{route.Name}' was not found!");
             }
         }
 
-        // Get the name of the currently used global in Train Simulator
-        string? global = routes.FirstOrDefault(r => r.CurrentPlace == Place.TrainSim)?.Global;
+        bool allRoutesInExtStorage = routes.All(r => r.CurrentPlace == Place.ExtStorage);
+        List<MovableRoute> routesInTrainSim = routes.Where(r => r.CurrentPlace == Place.TrainSim).ToList();
 
-        // Get the name of the currently used sound in Train Simulator
-        string? sound = routes.FirstOrDefault(r => r.CurrentPlace == Place.TrainSim)?.Sound;
-
+        // Iterate over each route
         foreach (MovableRoute route in routes)
         {
             if (route.CurrentPlace == Place.TrainSim)
             {
-                // The route is in the Train Simulator
+                // Check the presence of each folder belonging to the route
+                foreach (KeyValuePair<string, string> folder in route.Folders)
+                {
+                    // Check if the specified folder exists in Train Simulator
+                    if (!Directory.Exists(route.GetFolderPath(folder.Key, Place.TrainSim)))
+                        throw new ApplicationException($"{folder.Key} of the '{route.Name}' route not found!");
 
-                if (!Directory.Exists(route.GetGlobalPath(Place.TrainSim)))
-                    throw new ApplicationException($"Global of the '{route.Name}' route not found!");
+                    // Check if the specified folder does not exist in external storage
+                    if (Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)))
+                        throw new ApplicationException($"The route '{route.Name}' is in the Train Simulator but its '{folder.Key}' is in the external storage!");
 
-                if (!Directory.Exists(route.GetSoundPath(Place.TrainSim)))
-                    throw new ApplicationException($"Sound of the '{route.Name}' route not found!");
-
-                if (Directory.Exists(route.GetGlobalPath(Place.ExtStorage)))
-                    throw new ApplicationException($"The route '{route.Name}' is in the Train Simulator but its global '{route.Global}' is in the external storage!");
-
-                if (Directory.Exists(route.GetSoundPath(Place.ExtStorage)))
-                    throw new ApplicationException($"The route '{route.Name}' is in the Train Simulator but its sound '{route.Sound}' is in the external storage!");
-
-                if (routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Global != route.Global))
-                    throw new ApplicationException($"The route '{route.Name}' cannot be in the Train Simulator because its global is different from global of other routes!");
-
-                if (routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Sound != route.Sound))
-                    throw new ApplicationException($"The route '{route.Name}' cannot be in the Train Simulator because its sound is different from sound of other routes!");
+                    // Check if there is no other route in Train Simulator that has a different folder (e.g. different Global or Sound)
+                    if (routes.Any(r => r != route && r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] != folder.Value))
+                        throw new ApplicationException($"The route '{route.Name}' cannot be in the Train Simulator because its '{folder.Key}' is different from '{folder.Key}' of other routes!");
+                }
 
                 route.CurrentColor = Colors.Green;
             }
             else if (route.CurrentPlace == Place.ExtStorage)
             {
-                // The route is in the external storage
-
-                if (!Directory.Exists(route.GetGlobalPath(Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Global == route.Global))
-                    throw new ApplicationException($"Global of the '{route.Name}' route not found!");
-
-                if (!Directory.Exists(route.GetSoundPath(Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Sound == route.Sound))
-                    throw new ApplicationException($"Sound of the '{route.Name}' route not found!");
-
-                if (global != null && sound != null)
+                // Check the presence of each folder belonging to the route
+                foreach (KeyValuePair<string, string> folder in route.Folders)
                 {
-                    if (route.Global != global && route.Sound != sound)
-                    {
-                        // Incompatible route
-                        route.CurrentColor = Colors.Red;
-                    }
-                    else if (route.Global != global || route.Sound != sound)
-                    {
-                        // Partially compatible route
-                        route.CurrentColor = Colors.DodgerBlue;
-                    }
-                    else
+                    // Check if the specified folder exists either in external storage or in Train Simulator
+                    if (!Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] == folder.Value))
+                        throw new ApplicationException($"{folder.Key} of the '{route.Name}' route not found!");
+                }
+
+                // Determine compatibility with routes in Train Simulator
+                if (allRoutesInExtStorage)
+                {
+                    route.CurrentColor = Colors.Black;
+                }
+                else
+                {
+                    if (routesInTrainSim.All(route.IsCompatible))
                     {
                         // Compatible route
                         route.CurrentColor = Colors.Green;
                     }
-                }
-                else
-                {
-                    route.CurrentColor = Colors.Black;
+                    else
+                    {
+                        // Incompatible route
+                        route.CurrentColor = Colors.Red;
+                    }
                 }
             }
         }
@@ -140,60 +130,63 @@ internal class Mover
     {
         if (route.CurrentPlace == Place.TrainSim)
         {
-            // The route is in the Train Simulator
+            bool isOnlyRoute = routes.Count(r => r.CurrentPlace == Place.TrainSim) == 1;
+            List<MovableRoute> routesInTrainSim = routes.Where(r => r.CurrentPlace == Place.TrainSim).ToList();
 
+            // Move route directory to external storage
             MoveDirectory(route.GetRoutePath(Place.TrainSim), route.GetRoutePath(Place.ExtStorage));
 
-            if (routes.Count(r => r.CurrentPlace == Place.TrainSim) == 1)
+            // Move all unused directories to external storage, as we would no longer be able to identify them
+            foreach (KeyValuePair<string, string> folder in route.Folders)
             {
-                MoveDirectory(route.GetGlobalPath(Place.TrainSim), route.GetGlobalPath(Place.ExtStorage));
-                MoveDirectory(route.GetSoundPath(Place.TrainSim), route.GetSoundPath(Place.ExtStorage));
+                if (isOnlyRoute || !routesInTrainSim.Any(r => r != route && r.Folders.ContainsKey(folder.Key)))
+                {
+                    MoveDirectory(route.GetFolderPath(folder.Key, Place.TrainSim), route.GetFolderPath(folder.Value, Place.ExtStorage));
+                }
             }
 
             route.CurrentPlace = Place.ExtStorage;
         }
         else if (route.CurrentPlace == Place.ExtStorage)
         {
-            // The route is in the external storage
-
-            IList<MovableRoute> conflictingRoutes = routes.Where(r => r.CurrentPlace == Place.TrainSim && (r.Global != route.Global || r.Sound != route.Sound)).ToList();
-
-            if (conflictingRoutes.Count > 0)
+            // Check if there are incompatible routes
+            List<MovableRoute> incompatibleRoutes = routes.Where(r => r.CurrentPlace == Place.TrainSim && !route.IsCompatible(r)).ToList();
+            if (incompatibleRoutes.Count > 0)
             {
-                foreach (MovableRoute conflictingRoute in conflictingRoutes)
+                // Move all incompatible routes and their folders to external storage
+                foreach (MovableRoute incompatibleRoute in incompatibleRoutes)
                 {
-                    MoveDirectory(conflictingRoute.GetRoutePath(Place.TrainSim), conflictingRoute.GetRoutePath(Place.ExtStorage));
-                }
+                    MoveDirectory(incompatibleRoute.GetRoutePath(Place.TrainSim), incompatibleRoute.GetRoutePath(Place.ExtStorage));
 
-                MovableRoute oneConflictingRoute = conflictingRoutes.DistinctBy(r => r.Global + r.Sound).Single();
-
-                if (oneConflictingRoute.Global != route.Global)
-                {
-                    MoveDirectory(oneConflictingRoute.GetGlobalPath(Place.TrainSim), oneConflictingRoute.GetGlobalPath(Place.ExtStorage));
-                }
-
-                if (oneConflictingRoute.Sound != route.Sound)
-                {
-                    MoveDirectory(oneConflictingRoute.GetSoundPath(Place.TrainSim), oneConflictingRoute.GetSoundPath(Place.ExtStorage));
+                    foreach (KeyValuePair<string, string> folder in incompatibleRoute.Folders)
+                    {
+                        if (Directory.Exists(route.GetFolderPath(folder.Key, Place.TrainSim)))
+                        {
+                            MoveDirectory(route.GetFolderPath(folder.Key, Place.TrainSim), route.GetFolderPath(folder.Value, Place.ExtStorage));
+                        }
+                    }
                 }
             }
 
-            if (Directory.Exists(route.GetGlobalPath(Place.ExtStorage)))
-            {
-                MoveDirectory(route.GetGlobalPath(Place.ExtStorage), route.GetGlobalPath(Place.TrainSim));
-            }
-
-            if (Directory.Exists(route.GetSoundPath(Place.ExtStorage)))
-            {
-                MoveDirectory(route.GetSoundPath(Place.ExtStorage), route.GetSoundPath(Place.TrainSim));
-            }
-
+            // Move route directory to Train Simulator
             MoveDirectory(route.GetRoutePath(Place.ExtStorage), route.GetRoutePath(Place.TrainSim));
+
+            // Move all necessary directories to Train Simulator (if they do not already present)
+            foreach (KeyValuePair<string, string> folder in route.Folders)
+            {
+                if (Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)))
+                {
+                    MoveDirectory(route.GetFolderPath(folder.Value, Place.ExtStorage), route.GetFolderPath(folder.Key, Place.TrainSim));
+                }
+            }
 
             route.CurrentPlace = Place.TrainSim;
         }
     }
 
+    /// <summary>
+    /// Moves directory to a new location and write a log event.
+    /// </summary>
     private static void MoveDirectory(string sourceDirName, string destDirName)
     {
         Directory.Move(sourceDirName, destDirName);

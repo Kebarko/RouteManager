@@ -20,7 +20,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" FontSize="15" FontWeight="Medium" Margin="20, 0, 0, 0">Train Simulator</Label>
+        <Label Grid.Row="0" Grid.Column="0" FontSize="15" FontWeight="Medium" Margin="20, 0, 0, 0">Train Simulator (Open Rails)</Label>
         <Label Grid.Row="0" Grid.Column="2" FontSize="15" FontWeight="Medium" Margin="20, 0, 0, 0">External storage</Label>
         <ListBox Grid.Row="1" Grid.Column="0" Name="ActiveRoutes" Margin="20, 0, 20, 0">
             <ListBox.ItemTemplate>
@@ -31,10 +31,20 @@
                         </TextBlock.Foreground>
                         <TextBlock.ToolTip>
                             <ToolTip>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Path=Global}"/>
-                                    <TextBlock Text="{Binding Path=Sound}"/>
-                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding Folders}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                                        <Binding Path="Key" />
+                                                        <Binding Path="Value" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </ToolTip>
                         </TextBlock.ToolTip>
                     </TextBlock>
@@ -54,10 +64,20 @@
                         </TextBlock.Foreground>
                         <TextBlock.ToolTip>
                             <ToolTip>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Path=Global}"/>
-                                    <TextBlock Text="{Binding Path=Sound}"/>
-                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding Folders}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                                        <Binding Path="Key" />
+                                                        <Binding Path="Value" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </ToolTip>
                         </TextBlock.ToolTip>
                     </TextBlock>
