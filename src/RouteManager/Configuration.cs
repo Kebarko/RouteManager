@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KE.MSTS.RouteManager.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -38,23 +39,23 @@ internal sealed class Configuration
     {
         using (Stream sr = new FileStream("configuration.json", FileMode.Open, FileAccess.Read, FileShare.None))
         {
-            JsonDocument jDoc = JsonDocument.Parse(sr) ?? throw new ApplicationException("Configuration not found!");
+            JsonDocument jDoc = JsonDocument.Parse(sr) ?? throw new BadConfigurationException("Configuration not found!");
 
             string? trainSimPath = jDoc.RootElement.GetProperty(nameof(TrainSimPath)).GetString();
             string? extStoragePath = jDoc.RootElement.GetProperty(nameof(ExtStoragePath)).GetString();
 
             if (!Path.Exists(trainSimPath))
-                throw new ApplicationException(@$"{trainSimPath}{Environment.NewLine}The specified path does not exist!");
+                throw new BadConfigurationException(@$"{trainSimPath}{Environment.NewLine}The specified path does not exist!");
 
             if (!Path.Exists(extStoragePath))
-                throw new ApplicationException(@$"{extStoragePath}{Environment.NewLine}The specified path does not exist!");
+                throw new BadConfigurationException(@$"{extStoragePath}{Environment.NewLine}The specified path does not exist!");
 
             if (Path.GetPathRoot(trainSimPath) != Path.GetPathRoot(extStoragePath))
-                throw new ApplicationException("Train Simulator and external storage must be on the same volume!");
+                throw new BadConfigurationException("Train Simulator and external storage must be on the same volume!");
 
             if (trainSimPath.StartsWith(extStoragePath, StringComparison.InvariantCultureIgnoreCase) ||
                 extStoragePath.StartsWith(trainSimPath, StringComparison.InvariantCultureIgnoreCase))
-                throw new ApplicationException("Train Simulator and external storage must be in different folders!");
+                throw new BadConfigurationException("Train Simulator and external storage must be in different folders!");
 
             TrainSimPath = trainSimPath;
             ExtStoragePath = extStoragePath;
@@ -82,19 +83,19 @@ internal sealed class Configuration
                 }
 
                 if (string.IsNullOrEmpty(name))
-                    throw new ApplicationException("Route name is undefined!");
+                    throw new BadConfigurationException("Route name is undefined!");
 
                 if (!folders.ContainsKey(Route.Global))
-                    throw new ApplicationException($"Global of the '{name}' route is undefined!");
+                    throw new BadConfigurationException($"Global of the '{name}' route is undefined!");
 
                 if (!folders.ContainsKey(Route.Global))
-                    throw new ApplicationException($"Sound of the '{name}' route is undefined!");
+                    throw new BadConfigurationException($"Sound of the '{name}' route is undefined!");
 
                 Routes.Add(new Route(name, folders));
             }
 
             if (Routes.Count == 0)
-                throw new ApplicationException("Routes not found!");
+                throw new BadConfigurationException("Routes not found!");
         }
     }
 }

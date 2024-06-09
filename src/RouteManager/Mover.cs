@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using KE.MSTS.RouteManager.Exceptions;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,7 +61,7 @@ internal class Mover
             else
             {
                 // The route was not found
-                throw new ApplicationException($"The route '{route.Name}' was not found!");
+                throw new InvalidStateException($"The route '{route.Name}' was not found!");
             }
         }
 
@@ -77,15 +78,15 @@ internal class Mover
                 {
                     // Check if the specified folder exists in Train Simulator
                     if (!Directory.Exists(route.GetFolderPath(folder.Key, Place.TrainSim)))
-                        throw new ApplicationException($"{folder.Key} of the '{route.Name}' route not found!");
+                        throw new InvalidStateException($"{folder.Key} of the '{route.Name}' route not found!");
 
                     // Check if the specified folder does not exist in external storage
                     if (Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)))
-                        throw new ApplicationException($"The route '{route.Name}' is in the Train Simulator but its '{folder.Key}' is in the external storage!");
+                        throw new InvalidStateException($"The route '{route.Name}' is in the Train Simulator but its '{folder.Key}' is in the external storage!");
 
                     // Check if there is no other route in Train Simulator that has a different folder (e.g. different Global or Sound)
                     if (routes.Any(r => r != route && r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] != folder.Value))
-                        throw new ApplicationException($"The route '{route.Name}' cannot be in the Train Simulator because its '{folder.Key}' is different from '{folder.Key}' of other routes!");
+                        throw new InvalidStateException($"The route '{route.Name}' cannot be in the Train Simulator because its '{folder.Key}' is different from '{folder.Key}' of other routes!");
                 }
 
                 route.CurrentColor = Colors.Green;
@@ -97,7 +98,7 @@ internal class Mover
                 {
                     // Check if the specified folder exists either in external storage or in Train Simulator
                     if (!Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] == folder.Value))
-                        throw new ApplicationException($"{folder.Key} of the '{route.Name}' route not found!");
+                        throw new InvalidStateException($"{folder.Key} of the '{route.Name}' route not found!");
                 }
 
                 // Determine compatibility with routes in Train Simulator
