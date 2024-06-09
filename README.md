@@ -16,7 +16,7 @@ Unpack `RouteManager.zip`.
 
 ## Configuration
 
-Before using Route Manager, you need to create a configuration file `configuration.json` in the root directory. This file, written in JSON format, describes the relationships between routes and their globals and sounds.
+Before using Route Manager, you need to create a configuration file `configuration.json` in the root directory. This file, written in JSON format, describes the relationships between routes and their related directories.
 
 ### Structure
 
@@ -28,7 +28,9 @@ Before using Route Manager, you need to create a configuration file `configurati
     {
       "Name": "",
       "Global": "",
-      "Sound": ""
+      "Sound": "",
+      "AdditionalFolder1": "",
+      "AdditionalFolder2": ""
     }
   ]
 }
@@ -36,7 +38,7 @@ Before using Route Manager, you need to create a configuration file `configurati
 
 `TrainSimPath` - absolute path to the Train Simulator root directory.
 
-`ExtStoragePath` - absolute path to the external storage (where currently unused routes with their globals and sounds will be stored).
+`ExtStoragePath` - absolute path to the external storage (where currently unused routes with their directories will be stored).
 
 `Routes` - list of routes managed by the application.
 
@@ -46,19 +48,21 @@ Before using Route Manager, you need to create a configuration file `configurati
 
 `Sound` - name of the route's sound.
 
+`AdditionalFolderX` - name of the additional folder to be moved with the route (you can have any number of additional folders).
+
 :exclamation: Train Simulator and external storage must be on the same volume, but in different folders.
 
 ### Example
 
-Suppose we have these routes with their globals and sounds:
+Suppose we have these routes with their directories:
 
-| Route   | Global   | Sound   |
-|---------|----------|---------|
-| Route_1 | Global_A | Sound_A |
-| Route_2 | Global_A | Sound_A |
-| Route_3 | Global_B | Sound_A |
-| Route_4 | Global_A | Sound_B |
-| Route_5 | Global_C | Sound_C |
+| Route   | Global   | Sound   | Track_B   | Track_K   |
+|---------|----------|---------|-----------|-----------|
+| Route_1 | Global_A | Sound_A | Track_B_A | Track_K_A |
+| Route_2 | Global_A | Sound_A | Track_B_A |           |
+| Route_3 | Global_B | Sound_A |           |           |
+| Route_4 | Global_A | Sound_B |           |           |
+| Route_5 | Global_C | Sound_C |           |           |
 
 The configuration file would look like this:
 
@@ -70,12 +74,15 @@ The configuration file would look like this:
     {
       "Name": "Route_1",
       "Global": "Global_A",
-      "Sound": "Sound_A"
+      "Sound": "Sound_A",
+      "Track_B": "Track_B_A",
+      "Track_K": "Track_K_A"
     },
     {
       "Name": "Route_2",
       "Global": "Global_A",
-      "Sound": "Sound_A"
+      "Sound": "Sound_A",
+      "Track_B": "Track_B_A"
     },
     {
       "Name": "Route_3",
@@ -110,9 +117,8 @@ The main window contains two lists. The list on the left side shows routes in Tr
 
 ### Route Color Coding
 
-- **Green**: Compatible routes (same global and sound).
-- **Blue**: Partially compatible routes (same global or sound).
-- **Red**: Incompatible routes (neither global nor sound match).
+- **Green**: Compatible routes (can co-exist with each other in Train Simulator).
+- **Red**: Incompatible routes (cannot co-exist with each other in Train Simulator).
 
 ### Logs
 
