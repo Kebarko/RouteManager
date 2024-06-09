@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -9,6 +10,7 @@ namespace KE.MSTS.RouteManager;
 /// <summary>
 /// Represents a Train Simulator route.
 /// </summary>
+[DebuggerDisplay("{Name}")]
 internal class Route
 {
     /// <summary>
@@ -55,7 +57,7 @@ internal class Route
     public Route(string name, IEnumerable<KeyValuePair<string, string>> folders)
     {
         Name = name;
-        Folders = folders.ToFrozenDictionary();
+        Folders = folders.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -89,9 +91,9 @@ internal class Route
     /// </summary>
     public bool IsCompatible(Route route)
     {
-        foreach (string key in Folders.Keys.Intersect(route.Folders.Keys))
+        foreach (string key in Folders.Keys.Intersect(route.Folders.Keys, StringComparer.OrdinalIgnoreCase))
         {
-            if (Folders[key] != route.Folders[key])
+            if (!Folders[key].Equals(route.Folders[key], StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

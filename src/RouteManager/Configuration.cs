@@ -53,8 +53,8 @@ internal sealed class Configuration
             if (Path.GetPathRoot(trainSimPath) != Path.GetPathRoot(extStoragePath))
                 throw new BadConfigurationException("Train Simulator and external storage must be on the same volume!");
 
-            if (trainSimPath.StartsWith(extStoragePath, StringComparison.InvariantCultureIgnoreCase) ||
-                extStoragePath.StartsWith(trainSimPath, StringComparison.InvariantCultureIgnoreCase))
+            if (trainSimPath.StartsWith(extStoragePath, StringComparison.OrdinalIgnoreCase) ||
+                extStoragePath.StartsWith(trainSimPath, StringComparison.OrdinalIgnoreCase))
                 throw new BadConfigurationException("Train Simulator and external storage must be in different folders!");
 
             TrainSimPath = trainSimPath;
@@ -64,7 +64,7 @@ internal sealed class Configuration
             foreach (JsonElement route in routes.EnumerateArray())
             {
                 string? name = null;
-                var folders = new Dictionary<string, string>();
+                var folders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
                 foreach (JsonProperty property in route.EnumerateObject())
                 {

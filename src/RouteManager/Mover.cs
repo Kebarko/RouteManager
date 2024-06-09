@@ -85,7 +85,7 @@ internal class Mover
                         throw new InvalidStateException($"The route '{route.Name}' is in the Train Simulator but its '{folder.Key}' is in the external storage!");
 
                     // Check if there is no other route in Train Simulator that has a different folder (e.g. different Global or Sound)
-                    if (routes.Any(r => r != route && r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] != folder.Value))
+                    if (routes.Any(r => r != route && r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && !r.Folders[folder.Key].Equals(folder.Value, StringComparison.OrdinalIgnoreCase)))
                         throw new InvalidStateException($"The route '{route.Name}' cannot be in the Train Simulator because its '{folder.Key}' is different from '{folder.Key}' of other routes!");
                 }
 
@@ -97,7 +97,7 @@ internal class Mover
                 foreach (KeyValuePair<string, string> folder in route.Folders)
                 {
                     // Check if the specified folder exists either in external storage or in Train Simulator
-                    if (!Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key] == folder.Value))
+                    if (!Directory.Exists(route.GetFolderPath(folder.Value, Place.ExtStorage)) && !routes.Any(r => r.CurrentPlace == Place.TrainSim && r.Folders.ContainsKey(folder.Key) && r.Folders[folder.Key].Equals(folder.Value, StringComparison.OrdinalIgnoreCase)))
                         throw new InvalidStateException($"{folder.Key} of the '{route.Name}' route not found!");
                 }
 
