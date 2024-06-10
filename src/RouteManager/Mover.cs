@@ -129,6 +129,8 @@ internal class Mover
     /// <param name="route">The route to move.</param>
     public void Move(MovableRoute route)
     {
+        Log.Information($"Start of the moving route '{route.Name}'.");
+
         if (route.CurrentPlace == Place.TrainSim)
         {
             bool isOnlyRoute = routes.Count(r => r.CurrentPlace == Place.TrainSim) == 1;
@@ -183,6 +185,8 @@ internal class Mover
 
             route.CurrentPlace = Place.TrainSim;
         }
+
+        Log.Information($"End of the moving route '{route.Name}'.");
     }
 
     /// <summary>
