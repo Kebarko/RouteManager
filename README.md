@@ -118,6 +118,7 @@ The main window contains two lists. The list on the left side shows routes in Tr
 ### Route Color Coding
 
 - **Green**: Compatible routes (can co-exist with each other in Train Simulator).
+- **Blue**: Incompatible routes (cannot co-exist with each other in Train Simulator, but share common Global or Sound folders).
 - **Red**: Incompatible routes (cannot co-exist with each other in Train Simulator).
 
 ### Logs
