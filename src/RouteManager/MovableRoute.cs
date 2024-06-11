@@ -1,6 +1,4 @@
-﻿using System.Windows.Media;
-
-namespace KE.MSTS.RouteManager;
+﻿namespace KE.MSTS.RouteManager;
 
 /// <summary>
 /// Represents a Train Simulator route that can be moved between Train Simulator and external storage.
@@ -13,9 +11,9 @@ internal class MovableRoute : Route
     public Place CurrentPlace { get; set; }
 
     /// <summary>
-    /// Gets or sets the current color of the route.
+    /// Gets or sets the current compatibility of the route.
     /// </summary>
-    public Color CurrentColor { get; set; }
+    public Compatibility CurrentCompatibility { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MovableRoute"/> class with values of the specified route and current place.

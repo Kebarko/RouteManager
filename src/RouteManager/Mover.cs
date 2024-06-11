@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Media;
 
 namespace KE.MSTS.RouteManager;
 
@@ -89,7 +88,7 @@ internal class Mover
                         throw new InvalidStateException($"The route '{route.Name}' cannot be in the Train Simulator because its '{folder.Key}' is different from '{folder.Key}' of other routes!");
                 }
 
-                route.CurrentColor = Colors.Green;
+                route.CurrentCompatibility = Compatibility.Full;
             }
             else if (route.CurrentPlace == Place.ExtStorage)
             {
@@ -104,24 +103,24 @@ internal class Mover
                 // Determine compatibility with routes in Train Simulator
                 if (allRoutesInExtStorage)
                 {
-                    route.CurrentColor = Colors.Black;
+                    route.CurrentCompatibility = Compatibility.Unknown;
                 }
                 else
                 {
                     if (routesInTrainSim.All(route.IsCompatible))
                     {
                         // Compatible route
-                        route.CurrentColor = Colors.Green;
+                        route.CurrentCompatibility = Compatibility.Full;
                     }
                     else if (routesInTrainSim.Any(route.IsPartiallyCompatible))
                     {
                         // Partially compatible route
-                        route.CurrentColor = Colors.DodgerBlue;
+                        route.CurrentCompatibility = Compatibility.Partial;
                     }
                     else
                     {
                         // Incompatible route
-                        route.CurrentColor = Colors.Red;
+                        route.CurrentCompatibility = Compatibility.None;
                     }
                 }
             }
