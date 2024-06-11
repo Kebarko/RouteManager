@@ -1,8 +1,9 @@
-﻿using KE.MSTS.RouteManager;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+
+namespace KE.MSTS.RouteManager.Converters;
 
 /// <summary>
 /// Converts a <see cref="Compatibility"/> value to a <see cref="Color"/> value.
