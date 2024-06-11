@@ -113,6 +113,11 @@ internal class Mover
                         // Compatible route
                         route.CurrentColor = Colors.Green;
                     }
+                    else if (routesInTrainSim.Any(route.IsPartiallyCompatible))
+                    {
+                        // Partially compatible route
+                        route.CurrentColor = Colors.DodgerBlue;
+                    }
                     else
                     {
                         // Incompatible route

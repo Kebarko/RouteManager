@@ -101,4 +101,13 @@ internal class Route
 
         return true;
     }
+
+    /// <summary>
+    /// Determines whether this route is partially compatible with the specified route.
+    /// </summary>
+    public bool IsPartiallyCompatible(Route route)
+    {
+        return Folders[Global].Equals(route.Folders[Global], StringComparison.OrdinalIgnoreCase) ||
+               Folders[Sound].Equals(route.Folders[Sound], StringComparison.OrdinalIgnoreCase);
+    }
 }
