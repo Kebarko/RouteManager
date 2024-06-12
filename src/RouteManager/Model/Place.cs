@@ -1,4 +1,4 @@
-﻿namespace KE.MSTS.RouteManager;
+﻿namespace KE.MSTS.RouteManager.Model;
 
 /// <summary>
 /// Specifies the location where the route can be placed.

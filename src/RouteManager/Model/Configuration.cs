@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace KE.MSTS.RouteManager;
+namespace KE.MSTS.RouteManager.Model;
 
 /// <summary>
 /// Represents a configuration.

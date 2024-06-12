@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace KE.MSTS.RouteManager;
+namespace KE.MSTS.RouteManager.Model;
 
 /// <summary>
 /// Represents a component to handle routes.

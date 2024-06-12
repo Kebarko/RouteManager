@@ -1,9 +1,10 @@
-﻿using Serilog;
+﻿using KE.MSTS.RouteManager.Model;
+using Serilog;
 using System;
 using System.Reflection;
 using System.Windows;
 
-namespace KE.MSTS.RouteManager;
+namespace KE.MSTS.RouteManager.Views;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

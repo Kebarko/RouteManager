@@ -1,4 +1,4 @@
-﻿namespace KE.MSTS.RouteManager;
+﻿namespace KE.MSTS.RouteManager.Model;
 
 /// <summary>
 /// Specifies the compatibility of two routes in Train Simulator.

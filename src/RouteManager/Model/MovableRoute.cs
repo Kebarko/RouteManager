@@ -1,4 +1,4 @@
-﻿namespace KE.MSTS.RouteManager;
+﻿namespace KE.MSTS.RouteManager.Model;
 
 /// <summary>
 /// Represents a Train Simulator route that can be moved between Train Simulator and external storage.
