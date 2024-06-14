@@ -2,9 +2,11 @@
 
 ## Overview
 
-In the original Train Simulator, all routes shared the same Global and Sound. Later, many routes came with their own global or sound (or both), leading to conflicts. Managing these directories manually or with batch files/scripts became complicated and error-prone.
+In the original Train Simulator, all routes shared the same Global and Sound. Later, many routes came with their own global or sound (or both), leading to conflicts. Even some routes have an extra directories in the root directory like Track_B. Managing these directories manually or with batch files/scripts became complicated and error-prone.
 
 Route manager is a desktop application to move routes between Train Simulator and some external storage. All you have to do is create a configuration that describes the relationships between routes and their globals and sounds.
+
+The application also works with Open Rails or any other game based on Train Simulator's directory structure.
 
 ## Requirements
 
