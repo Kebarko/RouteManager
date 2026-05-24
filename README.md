@@ -10,7 +10,7 @@ The application also works with Open Rails or any other game based on Train Simu
 
 ## Requirements
 
-`.NET 8`
+`.NET 10`
 
 ## Installation
 
